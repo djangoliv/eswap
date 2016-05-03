@@ -40,6 +40,7 @@ please replace the path of the `eswap-toggle-path-alist` variable
           )))
 
 example:
+
     * source path is /path/to/my/sourceDir/subdir1/subdir2/fileName
     * target path is /path/to/my/targetDir/subdir1/subdir2/fileName
 	
