@@ -70,6 +70,10 @@
 ;;        (("/path/to/my/sourceDir" . "path/to/my/targetDir"))))
 
 ;;; Code:
+
+(eval-when-compile
+  (require 'cl))
+
 (defvar eswap-except-modes '(calc-mode dired-mode)
   "A list of modes in which `eswap-mode' should not be activated.")
 
@@ -79,25 +83,27 @@
 (defvar eswap-toggle-path-alist ()
   "list of path correspondence for `eswap-mode'.")
 
+(defvar eswap-line)
+
 (defun eswap-current-file ()
   "toggle src/target file"
   (interactive)
-  (setq theline (line-number-at-pos))
+  (setq eswap-line (line-number-at-pos))
   (setq es-do-it nil)
   (dolist (paths eswap-toggle-path-alist)
     (let ((srcPath (file-name-as-directory (car paths)))
           (targetPath (file-name-as-directory (cdr paths))))
-          (if (string-match-p srcPath (buffer-file-name)) ;; src file goto target
+      (if (string-match-p srcPath (buffer-file-name)) ;; src file goto target
+          (progn
+            (find-file (replace-regexp-in-string srcPath targetPath (buffer-file-name) t))
+            (setq es-do-it t)
+            (forward-line (- eswap-line (line-number-at-pos))))
+        (progn
+          (if (string-match-p targetPath (buffer-file-name)) ;; target file goto src
               (progn
-                (find-file (replace-regexp-in-string srcPath targetPath (buffer-file-name) t))
+                (find-file (replace-regexp-in-string targetPath srcPath (buffer-file-name) t))
                 (setq es-do-it t)
-                (goto-line theline))
-            (progn
-              (if (string-match-p targetPath (buffer-file-name)) ;; target file goto src
-                  (progn
-                    (find-file (replace-regexp-in-string targetPath srcPath (buffer-file-name) t))
-                    (setq es-do-it t)
-                    (goto-line theline)))))))
+                (forward-line (- eswap-line (line-number-at-pos)))))))))
   (if (not es-do-it)
       (message "not a project file")
     (message "toggle")))
