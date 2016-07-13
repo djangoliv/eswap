@@ -139,7 +139,7 @@
       (message "not a target file")))
 
 (defun eswap-define-keys ()
-  "Defines keys for `drag-stuff-mode'."
+  "Defines keys for `eswap-mode'."
   (define-key eswap-mode-map (kbd "<f5>") 'eswap-current-file)
   (define-key eswap-mode-map (kbd "C-<f5>") 'eswap-replace-target-file)
   (define-key eswap-mode-map (kbd "C-S-<f5>") 'eswap-replace-src-file))
